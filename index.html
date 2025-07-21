@@ -1,98 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF‑8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Projects</title>
+  <meta charset="UTF-8">
+  <title>3D Laptop with Three.js</title>
   <style>
-    body { font-family: sans-serif; margin: 0; background: #f7f0e5; color: #333; }
-    header { display: flex; justify-content: space-between; padding: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    nav a { margin: 0 1rem; text-decoration: none; color: #333; }
-    .hero { padding: 2rem; text-align: center; }
-    .hero h1 { margin-bottom: .5rem; }
-    .hero .controls button { margin: 0 .5rem; padding: .5rem 1rem; }
-    .projects, .related { padding: 2rem; }
-    .group { margin-bottom: 2rem; }
-    .group h2 { margin-bottom: .5rem; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
-    .card { background: #fff; padding: 1rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    body { margin: 0; background: #1a1a1a; overflow: hidden; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
-
-  <header>
-    <div class="logo"><strong>My Portfolio</strong></div>
-    <nav>
-      <a href="#projects">Projects</a>
-      <a href="#about">About</a>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <h1>Featured Project</h1>
-    <p><em>Title • Tagline • Minimal • 3D • Retro</em></p>
-    <div class="controls">
-      <button id="prev">Prev</button>
-      <button id="visit">Visit Site</button>
-      <button id="next">Next</button>
-    </div>
-    <div id="hero‑media">
-      <!-- image or video embed -->
-    </div>
-  </section>
-
-  <section id="related" class="related">
-    <h2>Related Projects</h2>
-    <div class="grid">
-      <!-- Repeat card blocks -->
-      <div class="card"><h3>Project A</h3><p>Tags: 3D • Minimal</p></div>
-      <div class="card"><h3>Project B</h3><p>Tags: Portfolio • Retro</p></div>
-      <!-- … -->
-    </div>
-  </section>
-
-  <section id="latest" class="projects">
-    <h2>Latest Animation Works</h2>
-    <div class="grid">
-      <div class="card"><h3>Project X</h3><p>Tags: eCommerce • Minimal</p></div>
-      <div class="card"><h3>Project Y</h3><p>Tags: Architecture • 3D</p></div>
-      <!-- … -->
-    </div>
-  </section>
-
-  <footer style="padding:1rem; text-align:center; background:#fff;">
-    <p>Follow me:
-      <a href="#">X</a> •
-      <a href="#">Instagram</a> •
-      <a href="#">LinkedIn</a>
-    </p>
-  </footer>
+  <!-- Load Three.js and OrbitControls from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
-    const projects = [
-      { title: 'Project A', tags: ['3D', 'Minimal'], url: '#' },
-      { title: 'Project B', tags: ['Portfolio', 'Retro'], url: '#' },
-      { title: 'Project C', tags: ['Motion', 'WebGL'], url: '#' },
-    ];
-    let current = 0;
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1a1a);
 
-    function showHero(idx) {
-      const p = projects[idx];
-      document.querySelector('.hero h1').textContent = p.title;
-      document.querySelector('.hero em').textContent = p.tags.join(' • ');
-      document.getElementById('visit').onclick = () => window.open(p.url, '_blank');
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(5, 3, 5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 10, 7.5);
+    scene.add(directionalLight);
+
+    // Laptop Base (keyboard part)
+    const baseGeometry = new THREE.BoxGeometry(4, 0.2, 3);
+    const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+    const base = new THREE.Mesh(baseGeometry, baseMaterial);
+    scene.add(base);
+
+    // Laptop Screen
+    const screenGeometry = new THREE.BoxGeometry(4, 2.5, 0.1);
+    const screenMaterial = new THREE.MeshStandardMaterial({ color: 0x111111 });
+    const screen = new THREE.Mesh(screenGeometry, screenMaterial);
+    screen.position.y = 1.35;
+    screen.position.z = -1.45;
+    screen.rotation.x = -Math.PI / 8; // Tilt back a bit
+    scene.add(screen);
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
     }
+    animate();
 
-    document.getElementById('prev').onclick = () => {
-      current = (current - 1 + projects.length) % projects.length;
-      showHero(current);
-    };
-    document.getElementById('next').onclick = () => {
-      current = (current + 1) % projects.length;
-      showHero(current);
-    };
-
-    showHero(current);
+    // Responsive
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 </html>
