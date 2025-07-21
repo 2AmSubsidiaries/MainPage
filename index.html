@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF‑8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Projects</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f7f0e5; color: #333; }
+    header { display: flex; justify-content: space-between; padding: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    nav a { margin: 0 1rem; text-decoration: none; color: #333; }
+    .hero { padding: 2rem; text-align: center; }
+    .hero h1 { margin-bottom: .5rem; }
+    .hero .controls button { margin: 0 .5rem; padding: .5rem 1rem; }
+    .projects, .related { padding: 2rem; }
+    .group { margin-bottom: 2rem; }
+    .group h2 { margin-bottom: .5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+    .card { background: #fff; padding: 1rem; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo"><strong>My Portfolio</strong></div>
+    <nav>
+      <a href="#projects">Projects</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Featured Project</h1>
+    <p><em>Title • Tagline • Minimal • 3D • Retro</em></p>
+    <div class="controls">
+      <button id="prev">Prev</button>
+      <button id="visit">Visit Site</button>
+      <button id="next">Next</button>
+    </div>
+    <div id="hero‑media">
+      <!-- image or video embed -->
+    </div>
+  </section>
+
+  <section id="related" class="related">
+    <h2>Related Projects</h2>
+    <div class="grid">
+      <!-- Repeat card blocks -->
+      <div class="card"><h3>Project A</h3><p>Tags: 3D • Minimal</p></div>
+      <div class="card"><h3>Project B</h3><p>Tags: Portfolio • Retro</p></div>
+      <!-- … -->
+    </div>
+  </section>
+
+  <section id="latest" class="projects">
+    <h2>Latest Animation Works</h2>
+    <div class="grid">
+      <div class="card"><h3>Project X</h3><p>Tags: eCommerce • Minimal</p></div>
+      <div class="card"><h3>Project Y</h3><p>Tags: Architecture • 3D</p></div>
+      <!-- … -->
+    </div>
+  </section>
+
+  <footer style="padding:1rem; text-align:center; background:#fff;">
+    <p>Follow me:
+      <a href="#">X</a> •
+      <a href="#">Instagram</a> •
+      <a href="#">LinkedIn</a>
+    </p>
+  </footer>
+
+  <script>
+    const projects = [
+      { title: 'Project A', tags: ['3D', 'Minimal'], url: '#' },
+      { title: 'Project B', tags: ['Portfolio', 'Retro'], url: '#' },
+      { title: 'Project C', tags: ['Motion', 'WebGL'], url: '#' },
+    ];
+    let current = 0;
+
+    function showHero(idx) {
+      const p = projects[idx];
+      document.querySelector('.hero h1').textContent = p.title;
+      document.querySelector('.hero em').textContent = p.tags.join(' • ');
+      document.getElementById('visit').onclick = () => window.open(p.url, '_blank');
+    }
+
+    document.getElementById('prev').onclick = () => {
+      current = (current - 1 + projects.length) % projects.length;
+      showHero(current);
+    };
+    document.getElementById('next').onclick = () => {
+      current = (current + 1) % projects.length;
+      showHero(current);
+    };
+
+    showHero(current);
+  </script>
+</body>
+</html>
